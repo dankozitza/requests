@@ -60,3 +60,13 @@ func TestUnmarshal_UrlEncoded(t *testing.T) {
 	assert.Equal(t, "taz", example.Baz)
 	assert.Equal(t, "welcome! :D", string(*example.Qux))
 }
+
+func TestUnmarshal_Errors(t *testing.T) {
+	body := bytes.NewBufferString(`foo=1&bar=2.7&baz=taz&qux=welcome`)
+	httpRequest, _ := http.NewRequest("POST", "/", body)
+	httpRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	var target Unmarshaller
+	err := New(httpRequest).Unmarshal(target)
+	assert.Error(t, err)
+}
